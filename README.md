@@ -1,4 +1,6 @@
-Прод: https://property-workflows-eta.vercel.app
+Двійник для фабрики (бонус WS9); прод — окремий.
+
+Прод двійника: https://property-workflows-factory-eight.vercel.app
 
 # Шаблон проєкту розробника: Next.js + Supabase + OpenSpec
 
