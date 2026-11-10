@@ -43,7 +43,10 @@ if (withChecks) {
 
 const outDir = fs.mkdtempSync(path.join(os.tmpdir(), "factory-tap-"));
 const outFile = path.join(outDir, "vitest.json");
-const vitest = run(["node_modules/vitest/vitest.mjs", "run", "--reporter=json", `--outputFile=${outFile}`, ...filters]);
+// Обмежений паралелізм: на Windows повний паралельний прогін (PGlite WASM + тести, що запускають підпроцеси Node)
+// інколи завершує підпроцес кодом 0x80000003, і `doctor` бачить нестабільні тести. FACTORY_TAP_WORKERS змінює число.
+const workers = process.env.FACTORY_TAP_WORKERS ?? "2";
+const vitest = run(["node_modules/vitest/vitest.mjs", "run", "--reporter=json", `--outputFile=${outFile}`, `--maxWorkers=${workers}`, ...filters]);
 let report = null;
 try { report = JSON.parse(fs.readFileSync(outFile, "utf8")); } catch { /* reported below */ }
 fs.rmSync(outDir, { recursive: true, force: true });
