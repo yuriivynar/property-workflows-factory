@@ -29,7 +29,7 @@
 | AC-LEAVE-10 | діапазон лише із заблокованих днів | — | — | відкладено (чекає реалізації) |
 -->
 
-Вимоги: https://github.com/solomchaak/property-workflows-spec · джерело: issues · знімок 2026-11-01
+Вимоги: https://github.com/solomchaak/property-workflows-spec · джерело: issues · знімок 2026-11-10
 
 | AC | Що перевіряє | Код | Тест | Статус |
 |---|---|---|---|---|
@@ -63,6 +63,7 @@
 | AC-TASK-16 | скасування підтвердження останньої обов'язкової задачі — задача «to do», запуск «in progress» | `supabase/migrations/20261021085138_mark_task_done_confirmation.sql` (mark_task_done), `src/lib/runs/domain.ts` (needsConfirmation), `src/app/runs/[id]/mark-done-button.tsx` | `tests/db/run-clarify.test.ts`, `src/lib/runs/domain.test.ts` | реалізовано |
 | AC-TASK-17 | виконавець бачить у списку прогрес «2 of 5 done» | `supabase/migrations/20261020120848_run_progress.sql` (run_overview), `src/app/runs/page.tsx` | `tests/db/run-clarify.test.ts` | реалізовано |
 | AC-TASK-18 | співвиконавець бачить позначку лише на своїй задачі | `src/lib/runs/domain.ts` (canMarkTask), `src/app/runs/[id]/page.tsx` | `src/lib/runs/domain.test.ts` | реалізовано |
+| AC-TASK-19 | необов'язкову задачу завершеного запуску позначено «done»: запуск лишається «completed», прогрес її рахує | — | — | відкладено (чекає реалізації) |
 | AC-DSYS-01 | статуси «in progress» (синій) і «completed» (зелений) однакові в списку й на сторінках запусків, слово поруч із кольором | `src/components/ui/status-badge.tsx` (одна мапа статус → слово + токен), `src/app/runs/page.tsx`, `src/app/runs/[id]/page.tsx`, `src/app/globals.css` | `src/components/ui/status-badge.test.tsx` | реалізовано |
 | AC-DSYS-02 | менеджер на редакторі за прямим посиланням бачить «Not enough rights» і «Back to templates», шаблон не змінено | `src/app/templates/[id]/edit/page.tsx`, `src/components/ui/notice.tsx`, `src/lib/templates/domain.ts` (templatePageAccess) | `src/lib/templates/domain.test.ts`, `tests/db/template-versions.test.ts` | реалізовано |
 | AC-DSYS-03 | відвідувач без входу на сторінці запуску бачить сторінку входу, без даних запуску | `src/lib/auth/access.ts` (signInRedirect), `src/lib/supabase/proxy.ts`, `src/app/runs/[id]/page.tsx` (getClaims → /login), `src/components/ui/page-shell.tsx`, `src/app/layout.tsx` | `src/lib/auth/access.test.ts`, `tests/db/design-system.test.ts` | реалізовано |
@@ -110,3 +111,11 @@
 | AC-VENDOR-08 | вендор на списку шаблонів — «Not enough rights», жодного шаблону | — | — | відкладено (чекає реалізації) |
 | AC-VENDOR-09 | прямий запит вендора на запуск шаблону — запуску немає, список запусків без змін | `supabase/migrations/20261029090000_vendor_role.sql` (launch_run: LAUNCH_NOT_ALLOWED для vendor), `src/lib/auth/require-role.ts` | `tests/db/vendor-core.test.ts` | реалізовано |
 | AC-VENDOR-10 | вендор без задач — «No tasks assigned to you yet.», без порожньої таблиці | — | — | відкладено (чекає реалізації) |
+| AC-VENDOR-11 | сторінка запуску вендора: назва випадку заголовком і «Your tasks: 1 of 2 done», без статусу запуску, назви й версії шаблону | — | — | відкладено (чекає реалізації) |
+| AC-VENDOR-12 | рядок списку запусків вендора без назви шаблону | — | — | відкладено (чекає реалізації) |
+| AC-VENDOR-13 | після входу вендор бачить список запусків, навігація — лише «Runs» і «Profile» | — | — | відкладено (чекає реалізації) |
+| AC-VENDOR-14 | форма запуску, сторінка шаблону, список версій і редактор — «Not enough rights» і «Back to runs» для вендора | — | — | відкладено (чекає реалізації) |
+| AC-VENDOR-15 | прямий запит вендора на задачу запуску без його задач — задача «to do», «Run not found» | — | — | відкладено (чекає реалізації) |
+| AC-VENDOR-16 | вендор позначає необов'язкову задачу завершеного запуску: «done», «Your tasks: 1 of 1 done», запуск «completed» | — | — | відкладено (чекає реалізації) |
+| AC-VENDOR-17 | прямий запит вендора на задачі свого запуску — лише задачі 3 і 4 | — | — | відкладено (чекає реалізації) |
+| AC-VENDOR-18 | прямий запит вендора на email і профілі інших і задачі чужого запуску — нічого | — | — | відкладено (чекає реалізації) |
