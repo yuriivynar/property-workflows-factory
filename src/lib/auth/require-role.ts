@@ -21,7 +21,7 @@ export async function currentUser(supabase: Client): Promise<RoleCheck> {
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
   const role = profile?.role;
-  if (role !== "manager" && role !== "admin") return { ok: false, reason: "NOT_ALLOWED" };
+  if (role !== "manager" && role !== "admin" && role !== "vendor") return { ok: false, reason: "NOT_ALLOWED" };
   return { ok: true, userId, role };
 }
 

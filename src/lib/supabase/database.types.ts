@@ -258,6 +258,16 @@ export type Database = {
       };
     };
     Functions: {
+      vendor_runs: {
+        Args: Record<string, never>;
+        Returns: {
+          id: string;
+          case_name: string;
+          status: string;
+          your_done: number;
+          your_total: number;
+        }[];
+      };
       mark_task_done: {
         Args: {
           p_task_id: string;

@@ -112,6 +112,16 @@ export function taskBelongsToRun(task: { run_id: string } | null | undefined, ru
   return Boolean(task) && task!.run_id === runId;
 }
 
+/** Прогрес підрядника: лише його задачі в запуску. */
+export function formatYourTasks(done: number, total: number): string {
+  return `Your tasks: ${done} of ${total} done`;
+}
+
+/** Список запусків підрядника: без рядків — повідомлення, а не порожня таблиця (AC-VENDOR-10). */
+export function vendorRunsListState(rows: readonly unknown[] | null | undefined): "empty" | "table" {
+  return rows && rows.length > 0 ? "table" : "empty";
+}
+
 /** Список запусків: без жодного видимого запуску — порожній стан із наступною дією, а не порожня таблиця (AC-DSYS-04). */
 export function runsListState(runs: readonly unknown[] | null | undefined): "empty" | "table" {
   return runs && runs.length > 0 ? "table" : "empty";
