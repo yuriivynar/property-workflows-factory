@@ -1,0 +1,175 @@
+{
+  "kind": "uat",
+  "generatedAt": "2026-11-15T12:52:42.727Z",
+  "baseURL": "https://property-workflows-factory-eight.vercel.app",
+  "deployedSha": "a5cabbdef84931b23864766832243319ac39edda",
+  "testsCommit": "6c9edf4c8da262c7ca966ade616ccc095ecb93d4",
+  "reviewer": {
+    "model": "claude-haiku-5-5",
+    "disputes": "claude-sonnet-5-5"
+  },
+  "note": "Відео й траси не в git (test-results/ локально, артефакт CI). check-recordings конвеєра WS9 вимагає відео на диску — для нього цей manifest треба доповнити.",
+  "results": [
+    {
+      "id": "AC-VENDOR-01",
+      "proof": "AC-VENDOR-01",
+      "title": "AC-VENDOR-01: менеджер A запускає «Tenant move-in» для «Apartment 12, move-in» і призначає вендора V на задачі 3 і 4 — вони за V, а задачі 1, 2 і 5 за A",
+      "screenshot": "docs/qa/uat/2026-11-15-factory/frames/AC-VENDOR-01-then-1.png",
+      "video": "test-results/artifacts/vendor-assign-AC-VENDOR-01-f0642--за-V-а-задачі-1-2-і-5-за-A-chromium/video.webm",
+      "trace": "test-results/artifacts/vendor-assign-AC-VENDOR-01-f0642--за-V-а-задачі-1-2-і-5-за-A-chromium/trace.zip",
+      "asserted": true,
+      "vision": {
+        "met": true,
+        "readable": true,
+        "notes": "На кадрі заголовок «Apartment 12, move-in». Задачі Order cleaning і Hand over the keys мають виконавця ...-v01-vnd@example.test (V). Задачі Sign the lease, Collect the deposit і Record meter readings мають ...-v01-mgr-a@example.test (A)."
+      },
+      "agentModel": "claude-sonnet-5-5",
+      "agentVerdicts": {
+        "claude-haiku-5-5": "NEEDS-HUMAN",
+        "claude-sonnet-5-5": "PASS"
+      },
+      "escalated": true,
+      "quotesVerified": [
+        {
+          "quote": "Apartment 12, move-in",
+          "onPage": true
+        },
+        {
+          "quote": "Order cleaning",
+          "onPage": true
+        },
+        {
+          "quote": "uat-261115125107-v01-vnd@example.test",
+          "onPage": true
+        },
+        {
+          "quote": "Hand over the keys",
+          "onPage": true
+        },
+        {
+          "quote": "uat-261115125107-v01-vnd@example.test",
+          "onPage": true
+        },
+        {
+          "quote": "Sign the lease",
+          "onPage": true
+        },
+        {
+          "quote": "uat-261115125107-v01-mgr-a@example.test",
+          "onPage": true
+        },
+        {
+          "quote": "Collect the deposit",
+          "onPage": true
+        },
+        {
+          "quote": "uat-261115125107-v01-mgr-a@example.test",
+          "onPage": true
+        },
+        {
+          "quote": "Record meter readings",
+          "onPage": true
+        },
+        {
+          "quote": "uat-261115125107-v01-mgr-a@example.test",
+          "onPage": true
+        }
+      ],
+      "verdict": "PASS",
+      "factoryGate": "PASS",
+      "rule": "R6: перевірки, агент і цитати збігаються",
+      "playwrightMs": 19165,
+      "reviewCostUsd": 0.03667,
+      "reviewWallMs": 25210
+    },
+    {
+      "id": "AC-VENDOR-02",
+      "proof": "AC-VENDOR-02",
+      "title": "AC-VENDOR-02: у виборі виконавця менеджер A бачить email менеджера B, адміністратора й вендора V — і жодних імен, ролей чи інших даних профілю",
+      "screenshot": "docs/qa/uat/2026-11-15-factory/frames/AC-VENDOR-02-then-1.png",
+      "video": "test-results/artifacts/vendor-assign-AC-VENDOR-02-6a9c2-олей-чи-інших-даних-профілю-chromium/video.webm",
+      "trace": "test-results/artifacts/vendor-assign-AC-VENDOR-02-6a9c2-олей-чи-інших-даних-профілю-chromium/trace.zip",
+      "asserted": true,
+      "vision": {
+        "met": true,
+        "readable": true,
+        "notes": "На кадрі /runs/new відкрито список виконавця для задачі «Sign the lease». У ньому є «Me (run manager)» та лише email-адреси, серед яких uat-…-mgr-b, uat-…-adm і uat-…-vnd. Імен і ролей у списку не видно. Що саме ці три адреси належать B, адміну й V, видно лише з їхніх суфіксів."
+      },
+      "agentModel": "claude-sonnet-5-5",
+      "agentVerdicts": {
+        "claude-haiku-5-5": "NEEDS-HUMAN",
+        "claude-sonnet-5-5": "PASS"
+      },
+      "escalated": true,
+      "quotesVerified": [
+        {
+          "quote": "uat-261115125107-v02-mgr-b@example.test",
+          "onPage": true
+        },
+        {
+          "quote": "uat-261115125107-v02-adm@example.test",
+          "onPage": true
+        },
+        {
+          "quote": "uat-261115125107-v02-vnd@example.test",
+          "onPage": true
+        }
+      ],
+      "verdict": "PASS",
+      "factoryGate": "PASS",
+      "rule": "R6: перевірки, агент і цитати збігаються",
+      "playwrightMs": 15329,
+      "reviewCostUsd": 0.03654,
+      "reviewWallMs": 25318
+    },
+    {
+      "id": "AC-VENDOR-09",
+      "proof": "AC-VENDOR-09",
+      "title": "AC-VENDOR-09: вендор V прямим запитом, в обхід сторінок, запускає «Tenant move-in» — запуск не створено, список запусків не змінився",
+      "screenshot": "docs/qa/uat/2026-11-15-factory/frames/AC-VENDOR-09-then-1.png",
+      "video": "test-results/artifacts/vendor-forbidden-AC-VENDOR-01f35-список-запусків-не-змінився-chromium/video.webm",
+      "trace": "test-results/artifacts/vendor-forbidden-AC-VENDOR-01f35-список-запусків-не-змінився-chromium/trace.zip",
+      "asserted": false,
+      "vision": {
+        "met": false,
+        "readable": true,
+        "notes": "На кадрі /runs видно один рядок «Apartment 12, move-in» (шаблон «Tenant move-in», статус «in progress», прогрес «0 of 5 done»). Рядка «Apartment 16, move-in» немає, тож частина про відсутність спроби виконується. Проте текст «Your tasks: 0 of 2 done» на кадрі відсутній, тому перша частина «Тоді» не відповідає критерію; також кадр не показує, чий це список (V чи інший користувач)."
+      },
+      "agentModel": "claude-haiku-5-5",
+      "agentVerdicts": {
+        "claude-haiku-5-5": "FAIL",
+        "claude-sonnet-5-5": null
+      },
+      "escalated": false,
+      "quotesVerified": [
+        {
+          "quote": "Apartment 12, move-in",
+          "onPage": true
+        }
+      ],
+      "verdict": "FAIL",
+      "factoryGate": "FAIL",
+      "rule": "R1: перевірка впала — FAIL завжди, агент не перекриває",
+      "playwrightMs": 18292,
+      "reviewCostUsd": 0.00252,
+      "reviewWallMs": 11466
+    }
+  ],
+  "negativeControls": [],
+  "cleanup": {
+    "at": "2026-11-15T12:52:16.072Z",
+    "deleted": [
+      "uat-261115125107-v01-mgr-a@example.test",
+      "uat-261115125107-v01-vnd@example.test",
+      "uat-261115125107-v02-mgr-a@example.test",
+      "uat-261115125107-v02-mgr-b@example.test",
+      "uat-261115125107-v02-adm@example.test",
+      "uat-261115125107-v02-vnd@example.test",
+      "uat-261115125107-v09-adm@example.test",
+      "uat-261115125107-v09-mgr-a@example.test",
+      "uat-261115125107-v09-vnd@example.test"
+    ],
+    "remaining": [],
+    "leftoverRequests": 0
+  }
+}
