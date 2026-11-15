@@ -54,6 +54,19 @@ export function messageForError(code: string | null | undefined): string {
   return code && isRunErrorCode(code) ? MESSAGE_BY_CODE[code] : MESSAGES.unexpected;
 }
 
+/**
+ * Текст відмови позначки (AC-VENDOR-07, AC-VENDOR-15): підрядник без жодної своєї задачі в запуску бачить лише
+ * «Run not found» — сторінка не підказує, що запуск існує; в інших випадках — текст за кодом помилки.
+ */
+export function markRefusalMessage(input: {
+  role: string | null | undefined;
+  hasTaskInRun: boolean;
+  code: string | null | undefined;
+}): string {
+  if (input.role === "vendor" && !input.hasTaskInRun) return MESSAGES.runNotFound;
+  return messageForError(input.code);
+}
+
 export function requiredLabel(isRequired: boolean): string {
   return isRequired ? REQUIRED_LABELS.required : REQUIRED_LABELS.optional;
 }

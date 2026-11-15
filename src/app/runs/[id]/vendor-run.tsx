@@ -1,7 +1,7 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { TextLink } from "@/components/ui/text-link";
-import { isUuid, vendorRunView } from "@/lib/runs/domain";
+import { isUuid, markRefusalMessage, vendorRunView } from "@/lib/runs/domain";
 import { LABELS } from "@/lib/runs/messages";
 import { createClient } from "@/lib/supabase/server";
 import { MarkDoneButton } from "./mark-done-button";
@@ -9,7 +9,7 @@ import { RunNotFound } from "./run-not-found";
 
 // Сторінка запуску для підрядника (AC-VENDOR-04, 06, 11): лише vendor_runs() + vendor_run_tasks() + vendorRunView.
 // Жодного читання run_overview, run_tasks, шаблону, версії чи довідника колег.
-export async function VendorRun({ id, message }: { id: string; message?: string }) {
+export async function VendorRun({ id, errorCode }: { id: string; errorCode?: string }) {
   const supabase = await createClient();
 
   let run: { case_name: string; your_done: number; your_total: number } | null = null;
@@ -23,9 +23,14 @@ export async function VendorRun({ id, message }: { id: string; message?: string 
     tasks = rows ?? [];
   }
   const view = vendorRunView(run, tasks);
+  const message =
+    errorCode === undefined
+      ? undefined
+      : markRefusalMessage({ role: "vendor", hasTaskInRun: run !== null, code: errorCode });
 
   if (view.kind === "not-found") {
-    return <RunNotFound title={view.message} message={message} />;
+    // Заголовок уже «Run not found»: окремий Alert з тим самим текстом не потрібен.
+    return <RunNotFound title={view.message} message={message === view.message ? undefined : message} />;
   }
 
   // Підтвердження останньої обов'язкової задачі запуску вирішує база: підрядник не бачить чужих задач.
