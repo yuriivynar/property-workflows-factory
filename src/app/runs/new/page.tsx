@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { TextLink } from "@/components/ui/text-link";
+import { Notice } from "@/components/ui/notice";
+import { currentUser } from "@/lib/auth/require-role";
 import { messageForError, requiredLabel, staffLabel } from "@/lib/runs/domain";
 import { LABELS, MESSAGES } from "@/lib/runs/messages";
 import { createClient } from "@/lib/supabase/server";
-import { launchOptions } from "@/lib/templates/domain";
+import { launchOptions, refusalBackLink, TEMPLATE_MESSAGES, templatePageAccess } from "@/lib/templates/domain";
 import { parseVersionContent } from "@/lib/templates/version";
 import { SubmitButton } from "../submit-button";
 import { launchRun } from "./actions";
@@ -22,10 +24,17 @@ export default async function NewRunPage({ searchParams }: PageProps<"/runs/new"
   const message = typeof error === "string" ? messageForError(error) : undefined;
 
   const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-  const claims = data?.claims;
-  if (!claims) {
+  const user = await currentUser(supabase);
+  if (!user.ok) {
     redirect("/login");
+  }
+  if (templatePageAccess(user.role, "launch") !== "ok") {
+    const back = refusalBackLink(user.role);
+    return (
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
+        <Notice message={TEMPLATE_MESSAGES.notEnoughRights} backHref={back.href} backLabel={back.label} />
+      </main>
+    );
   }
 
   // Запускають лише збережені шаблони: задачі — з поточної версії (знімка), а не з незбережених змін
@@ -53,7 +62,7 @@ export default async function NewRunPage({ searchParams }: PageProps<"/runs/new"
   // Знімок без розділів (невідомий формат) — теж «не прочитано» (рев'ю CodeRabbit, PR #17).
   const versionMissing =
     Boolean(selected) && (Boolean(versionResult?.error) || !versionResult?.data?.content || sections.length === 0);
-  const colleagues = (staffResult?.data ?? []).filter((person) => person.id !== claims.sub);
+  const colleagues = (staffResult?.data ?? []).filter((person) => person.id !== user.userId);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
