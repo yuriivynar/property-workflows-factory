@@ -6,7 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { TextLink } from "@/components/ui/text-link";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatProgress, runsListState } from "@/lib/runs/domain";
+import { currentUser } from "@/lib/auth/require-role";
+import { formatProgress, formatYourTasks, runsListState, vendorRunsListState } from "@/lib/runs/domain";
 import { LABELS, MESSAGES } from "@/lib/runs/messages";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,6 +20,52 @@ export default async function RunsPage() {
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) {
     redirect("/login");
+  }
+
+  const user = await currentUser(supabase);
+  if (user.ok && user.role === "vendor") {
+    // Підрядник бачить лише vendor_runs(): без шаблону, менеджера й чужої роботи; без запуску шаблонів.
+    const { data: rows, error: vendorError } = await supabase.rpc("vendor_runs");
+    return (
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
+        <h1 className="text-2xl font-semibold">{LABELS.runsTitle}</h1>
+        {vendorError ? (
+          <Alert variant="destructive">
+            <AlertDescription>{MESSAGES.unexpected}</AlertDescription>
+          </Alert>
+        ) : vendorRunsListState(rows) === "table" && rows ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{LABELS.columnCase}</TableHead>
+                <TableHead>{LABELS.columnStatus}</TableHead>
+                <TableHead>{LABELS.columnYourTasks}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.map((run) => (
+                <TableRow key={run.id} data-testid="run-row">
+                  <TableCell className="py-2">
+                    <TextLink href={`/runs/${run.id}`}>{run.case_name}</TextLink>
+                  </TableCell>
+                  <TableCell className="py-2">
+                    <StatusBadge status={run.status ?? ""} />
+                  </TableCell>
+                  <TableCell className="py-2 tabular-nums" data-testid="run-progress">
+                    {formatYourTasks(run.your_done, run.your_total)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <p className="text-muted-foreground">{MESSAGES.noTasksAssigned}</p>
+        )}
+        <TextLink href="/" className="w-fit text-sm">
+          {LABELS.backToProfile}
+        </TextLink>
+      </main>
+    );
   }
 
   const { data: runs, error: loadError } = await supabase

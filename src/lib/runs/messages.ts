@@ -9,6 +9,7 @@ export const MESSAGES = {
   invalidAssignee: "An assignee must be a manager or an administrator",
   runNotFound: "Run not found",
   confirmationRequired: "This is the last required task: confirm to mark it as done. This cannot be undone.",
+  noTasksAssigned: "No tasks assigned to you yet.",
   unexpected: "Something went wrong. Try again.",
   // Робоче рішення (рев'ю PR #17): версію шаблону змінили, поки заповнювали форму запуску.
   templateVersionChanged: "The template has a new version. Review the tasks and launch again.",
@@ -41,6 +42,7 @@ export const LABELS = {
   columnTemplate: "Template",
   columnStatus: "Status",
   columnProgress: "Progress",
+  columnYourTasks: "Your tasks",
   template: "Template",
   chooseTemplate: "Choose a template",
   choose: "Choose",
