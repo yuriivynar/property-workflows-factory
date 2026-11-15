@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { currentUser } from "@/lib/auth/require-role";
 import { errorCodeFrom, isUuid, validateCaseName } from "@/lib/runs/domain";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,6 +19,13 @@ export async function launchRun(formData: FormData) {
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) {
     redirect("/login");
+  }
+
+  // Роль — з profiles (currentUser), до будь-якого запису: запускати може лише manager або admin; vendor — ні.
+  const user = await currentUser(supabase);
+  // Без входу ми вже перенаправили вище, тож тут лишається лише відмова за роллю.
+  if (!user.ok) {
+    return back("LAUNCH_NOT_ALLOWED");
   }
 
   if (!isUuid(templateId)) {

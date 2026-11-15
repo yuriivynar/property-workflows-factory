@@ -6,7 +6,7 @@ import type { Database } from "@/lib/supabase/database.types";
 // ДО будь-якого запису; запис потім робить клієнт користувача під RLS і GRANT (друга лінія захисту). proxy.ts лише
 // перенаправляє на /login — це UX, не захист.
 
-export type AppRole = "manager" | "admin";
+export type AppRole = "manager" | "admin" | "vendor";
 
 export type RoleCheck =
   | { ok: true; userId: string; role: AppRole }
