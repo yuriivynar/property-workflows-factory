@@ -15,6 +15,8 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { templateVersionLabel } from "@/lib/templates/version";
 import { MarkDoneButton } from "./mark-done-button";
+import { RunNotFound } from "./run-not-found";
+import { VendorRun } from "./vendor-run";
 
 // Сторінка запуску: прогрес «N of M done», задачі за розділами з виконавцем, позначкою обов'язковості й статусом
 // (AC-TASK-05, AC-TASK-08; робоче рішення до solomchaak/property-workflows-spec#11), кнопка позначки — лише там, де
@@ -32,6 +34,11 @@ export default async function RunPage({ params, searchParams }: PageProps<"/runs
     redirect("/login");
   }
 
+  const { data: ownProfile } = await supabase.from("profiles").select("role").eq("id", claims.sub).maybeSingle();
+  if (ownProfile?.role === "vendor") {
+    return <VendorRun id={id} message={message} />;
+  }
+
   const [{ data: run }, { data: profile }] = await Promise.all([
     supabase
       .from("run_overview")
@@ -45,19 +52,7 @@ export default async function RunPage({ params, searchParams }: PageProps<"/runs
     // Той, хто не бачить запуску, теж отримує текст AC-TASK-03, якщо надіслав позначку попри інтерфейс
     // (стара сторінка, прямий запит): база відповідає NOT_ALLOWED і для чужої, і для відсутньої задачі, тож
     // повідомлення не підказує, що запуск існує.
-    return (
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
-        <h1 className="text-2xl font-semibold">{MESSAGES.runNotFound}</h1>
-        {message ? (
-          <Alert variant="destructive">
-            <AlertDescription>{message}</AlertDescription>
-          </Alert>
-        ) : null}
-        <TextLink href="/runs" className="w-fit text-sm">
-          {LABELS.backToRuns}
-        </TextLink>
-      </main>
-    );
+    return <RunNotFound title={MESSAGES.runNotFound} message={message} />;
   }
   const runId = run.id;
   const runManagerId = run.run_manager_id;

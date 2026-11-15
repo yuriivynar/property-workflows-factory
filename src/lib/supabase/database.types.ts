@@ -268,6 +268,20 @@ export type Database = {
           your_total: number;
         }[];
       };
+      vendor_run_tasks: {
+        Args: { p_run_id: string };
+        Returns: {
+          id: string;
+          name: string;
+          section_name: string;
+          is_required: boolean;
+          status: string;
+        }[];
+      };
+      vendor_task_needs_confirmation: {
+        Args: { p_task_id: string };
+        Returns: boolean;
+      };
       mark_task_done: {
         Args: {
           p_task_id: string;
