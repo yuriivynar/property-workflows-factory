@@ -117,6 +117,34 @@ export function formatYourTasks(done: number, total: number): string {
   return `Your tasks: ${done} of ${total} done`;
 }
 
+export type VendorRunView =
+  | { kind: "not-found"; message: string }
+  | {
+      kind: "run";
+      title: string;
+      yourTasks: string;
+      tasks: { name: string; section: string; required: "required" | "optional"; status: "to do" | "done" }[];
+    };
+
+/** Сторінка запуску підрядника (AC-VENDOR-04, 06, 11): лише власні задачі; без статусу запуску, шаблону й версії. */
+export function vendorRunView(
+  run: { case_name: string; your_done: number; your_total: number } | null | undefined,
+  tasks: readonly { name: string; section_name: string; is_required: boolean; status: string }[],
+): VendorRunView {
+  if (!run) return { kind: "not-found", message: MESSAGES.runNotFound };
+  return {
+    kind: "run",
+    title: run.case_name,
+    yourTasks: formatYourTasks(run.your_done, run.your_total),
+    tasks: tasks.map((t) => ({
+      name: t.name,
+      section: t.section_name,
+      required: t.is_required ? "required" : "optional",
+      status: t.status === "done" ? "done" : "to do",
+    })),
+  };
+}
+
 /** Список запусків підрядника: без рядків — повідомлення, а не порожня таблиця (AC-VENDOR-10). */
 export function vendorRunsListState(rows: readonly unknown[] | null | undefined): "empty" | "table" {
   return rows && rows.length > 0 ? "table" : "empty";
