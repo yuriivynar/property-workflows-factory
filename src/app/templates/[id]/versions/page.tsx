@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { TextLink } from "@/components/ui/text-link";
 import { currentUser } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
-import { formatVersionDate, newestFirst, TEMPLATE_MESSAGES, templatePageAccess } from "@/lib/templates/domain";
+import { formatVersionDate, newestFirst, refusalBackLink, TEMPLATE_MESSAGES, templatePageAccess } from "@/lib/templates/domain";
 
 // Список версій — лише адміністратор: номер, дата й час збереження за Києвом (DD.MM.YYYY HH:MM), email автора,
 // найновіша перша (AC-EDITOR-05). Менеджер бачить «Not enough rights» і жодної версії; версії для нього не
@@ -18,9 +18,10 @@ export default async function TemplateVersionsPage({ params }: PageProps<"/templ
   if (!user.ok) redirect("/login");
 
   if (templatePageAccess(user.role, "versions") !== "ok") {
+    const back = refusalBackLink(user.role);
     return (
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
-        <Notice message={TEMPLATE_MESSAGES.notEnoughRights} backHref="/templates" backLabel={TEMPLATE_MESSAGES.backToTemplates} />
+        <Notice message={TEMPLATE_MESSAGES.notEnoughRights} backHref={back.href} backLabel={back.label} />
       </main>
     );
   }

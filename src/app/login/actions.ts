@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { safeNextPath } from "@/lib/auth/access";
+import { landingPath } from "@/lib/auth/nav";
+import { currentUser } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 
 // Вхід email + пароль. Реєстрації в шаблоні немає: користувачів створює
@@ -28,7 +30,17 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  redirect(next);
+  // Без явно запитаної сторінки виконавець потрапляє до списку запусків (AC-VENDOR-13).
+  let target = next;
+  if (next === "/") {
+    try {
+      const user = await currentUser(supabase);
+      if (user.ok) target = landingPath(user.role);
+    } catch {
+      // Роль не прочитано — як раніше, на головну.
+    }
+  }
+  redirect(target);
 }
 
 export async function signOut() {

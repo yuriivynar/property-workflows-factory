@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 import { PageShell } from "@/components/ui/page-shell";
+import { currentUser } from "@/lib/auth/require-role";
 import { createClient } from "@/lib/supabase/server";
 import { parseTheme, THEME_COOKIE, themeAttribute } from "@/lib/theme";
 import "./globals.css";
@@ -27,6 +28,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims);
+  const user = signedIn ? await currentUser(supabase) : null;
+  const role = user?.ok ? user.role : undefined;
   // Обрана тема — з cookie ще до першого малювання; без вибору — за пристроєм (ADR 0004; AC-DSYS-05, AC-DSYS-06).
   const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
 
@@ -37,7 +40,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <PageShell signedIn={signedIn} theme={theme}>{children}</PageShell>
+        <PageShell signedIn={signedIn} role={role} theme={theme}>{children}</PageShell>
       </body>
     </html>
   );

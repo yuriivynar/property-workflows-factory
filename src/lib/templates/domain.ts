@@ -86,14 +86,22 @@ export function templateErrorCode(error: { message?: string; code?: string } | n
   return "UNEXPECTED";
 }
 
-export type TemplatePage = "view" | "edit" | "versions";
+export type TemplatePage = "list" | "launch" | "view" | "edit" | "versions";
+
+/** Куди веде відмова: виконавець — до своїх запусків, інші — до шаблонів (AC-VENDOR-08, AC-VENDOR-14). */
+export function refusalBackLink(role: AppRole): { href: string; label: string } {
+  return role === "vendor"
+    ? { href: "/runs", label: "Back to runs" }
+    : { href: "/templates", label: TEMPLATE_MESSAGES.backToTemplates };
+}
 
 /**
  * Хто бачить сторінку шаблону: редактор і список версій — лише адміністратор; менеджер бачить «Not enough rights» і
  * жодних даних (AC-DSYS-02, AC-EDITOR-07). Поточну версію бачать обидві ролі (AC-EDITOR-02).
  */
 export function templatePageAccess(role: AppRole, page: TemplatePage): "ok" | "not-enough-rights" {
-  if (page === "view") return "ok";
+  if (role === "vendor") return "not-enough-rights";
+  if (page === "view" || page === "list" || page === "launch") return "ok";
   return role === "admin" ? "ok" : "not-enough-rights";
 }
 
