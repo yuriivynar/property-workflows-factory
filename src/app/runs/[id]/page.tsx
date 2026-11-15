@@ -36,7 +36,7 @@ export default async function RunPage({ params, searchParams }: PageProps<"/runs
 
   const { data: ownProfile } = await supabase.from("profiles").select("role").eq("id", claims.sub).maybeSingle();
   if (ownProfile?.role === "vendor") {
-    return <VendorRun id={id} message={message} />;
+    return <VendorRun id={id} errorCode={typeof error === "string" ? error : undefined} />;
   }
 
   const [{ data: run }, { data: profile }] = await Promise.all([
