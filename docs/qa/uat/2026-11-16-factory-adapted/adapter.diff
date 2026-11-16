@@ -1,0 +1,102 @@
+diff --git a/tests/e2e/optional-after-completed.spec.ts b/tests/e2e/optional-after-completed.spec.ts
+index 8d1fd16..5b846a4 100644
+--- a/tests/e2e/optional-after-completed.spec.ts
++++ b/tests/e2e/optional-after-completed.spec.ts
+@@ -139,7 +139,7 @@ test(
+           await completeRequired(manager, runId);
+           await signInAs(page, vendor);
+           await page.goto(`/runs/${runId}`);
+-          await expect(page.getByTestId("your-tasks")).toHaveText("Your tasks: 0 of 1 done");
++          await expect(page.getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/)).toHaveText("Your tasks: 0 of 1 done");
+         },
+       );
+ 
+@@ -162,7 +162,7 @@ test(
+         },
+         async () => {
+           await expect(page.getByTestId("run-task").filter({ hasText: task3Name }).getByTestId("task-status")).toHaveText("done");
+-          await expect(page.getByTestId("your-tasks")).toHaveText("Your tasks: 1 of 1 done");
++          await expect(page.getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/)).toHaveText("Your tasks: 1 of 1 done");
+           const main = page.getByRole("main");
+           await expect(main.getByText("completed", { exact: true })).toHaveCount(0);
+           await expect(main.getByText("in progress", { exact: true })).toHaveCount(0);
+@@ -186,7 +186,7 @@ test(
+         async () => {
+           const row = page.getByTestId("run-row").filter({ hasText: APARTMENT_12 });
+           await expect(row.getByText("completed", { exact: true })).toBeVisible();
+-          await expect(row.getByTestId("your-tasks")).toHaveText("Your tasks: 1 of 1 done");
++          await expect(row.getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/)).toHaveText("Your tasks: 1 of 1 done");
+           expect((await runTasks(runId)).find((task) => task.name === task3Name)?.status).toBe("done");
+         },
+       );
+diff --git a/tests/e2e/vendor-forbidden.spec.ts b/tests/e2e/vendor-forbidden.spec.ts
+index 42789ba..45546f8 100644
+--- a/tests/e2e/vendor-forbidden.spec.ts
++++ b/tests/e2e/vendor-forbidden.spec.ts
+@@ -251,7 +251,7 @@ test(
+           await expect(rows).toHaveCount(1);
+           await expect(rows).toHaveText(before);
+           await expect(rows.first().getByRole("link", { name: APARTMENT_12, exact: true })).toBeVisible();
+-          await expect(rows.first().getByTestId("your-tasks")).toHaveText("Your tasks: 0 of 2 done");
++          await expect(rows.first().getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/)).toHaveText("Your tasks: 0 of 2 done");
+           await expect(page.locator("body")).not.toContainText(attemptName);
+ 
+           expect(launchMessage).toContain("LAUNCH_NOT_ALLOWED");
+diff --git a/tests/e2e/vendor-runs.spec.ts b/tests/e2e/vendor-runs.spec.ts
+index 5902792..7580dd3 100644
+--- a/tests/e2e/vendor-runs.spec.ts
++++ b/tests/e2e/vendor-runs.spec.ts
+@@ -62,7 +62,7 @@ test(
+           await expect(rows).toHaveCount(1);
+           await expect(rows.first().getByRole("link", { name: APARTMENT_12, exact: true })).toBeVisible();
+           await expect(rows.first().getByText("in progress", { exact: true })).toBeVisible();
+-          await expect(rows.first().getByTestId("your-tasks")).toHaveText("Your tasks: 0 of 2 done");
++          await expect(rows.first().getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/)).toHaveText("Your tasks: 0 of 2 done");
+           await expect(page.getByText(APARTMENT_14)).toHaveCount(0);
+           await expect(page.locator("body")).not.toContainText(APARTMENT_14);
+         },
+@@ -134,7 +134,7 @@ test(
+           }
+           await expect(page.locator("body")).not.toContainText(manager.email);
+           await expect(rows.getByText(/@example\.test/)).toHaveCount(0);
+-          await expect(page.getByTestId("run-progress")).toHaveCount(0);
++          await expect(page.getByText(/^[0-9]+ of [0-9]+ done$/)).toHaveCount(0);
+           await expect(page.getByText(/of 5 done/)).toHaveCount(0);
+         },
+       );
+@@ -191,7 +191,7 @@ test(
+         async () => {
+           const row = page.getByTestId("run-task").filter({ hasText: template.tasks[2].name });
+           await expect(row.getByTestId("task-status")).toHaveText("done");
+-          await expect(page.getByTestId("your-tasks")).toHaveText("Your tasks: 1 of 2 done");
++          await expect(page.getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/)).toHaveText("Your tasks: 1 of 2 done");
+ 
+           await expect(page.getByText("This cannot be undone")).toHaveCount(0);
+           const keys = page.getByTestId("run-task").filter({ hasText: template.tasks[3].name });
+@@ -341,7 +341,7 @@ test(
+         async () => {
+           const main = page.getByRole("main");
+           await expect(main.getByRole("heading", { level: 1 })).toHaveText(APARTMENT_12);
+-          await expect(page.getByTestId("your-tasks")).toHaveText("Your tasks: 1 of 2 done");
++          await expect(page.getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/)).toHaveText("Your tasks: 1 of 2 done");
+           await expect(main.getByText("in progress", { exact: true })).toHaveCount(0);
+           await expect(main.getByText("completed", { exact: true })).toHaveCount(0);
+           await expect(page.locator("body")).not.toContainText("Tenant move-in");
+@@ -388,7 +388,7 @@ test(
+           await expect(page.getByTestId("run-row")).toHaveCount(1);
+           await expect(row.getByRole("link", { name: APARTMENT_12, exact: true })).toBeVisible();
+           await expect(row.getByText("in progress", { exact: true })).toBeVisible();
+-          await expect(row.getByTestId("your-tasks")).toHaveText("Your tasks: 0 of 2 done");
++          await expect(row.getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/)).toHaveText("Your tasks: 0 of 2 done");
+           await expect(row).not.toContainText("Tenant move-in");
+           await expect(page.locator("body")).not.toContainText("Tenant move-in");
+           await expect(page.getByRole("columnheader", { name: "Template" })).toHaveCount(0);
+@@ -399,7 +399,7 @@ test(
+       const row = page.getByTestId("run-row").first();
+       const href = await row.getByRole("link", { name: APARTMENT_12, exact: true }).getAttribute("href");
+       // Клік мишею в точку лічильника: її приймає розтягнуте над рядком посилання, а не сама клітинка.
+-      const cell = await row.getByTestId("your-tasks").boundingBox();
++      const cell = await row.getByText(/^Your tasks: [0-9]+ of [0-9]+ done$/).boundingBox();
+       expect(cell).not.toBeNull();
+       await page.mouse.click(cell!.x + cell!.width / 2, cell!.y + cell!.height / 2);
+       expect(href).toMatch(/^\/runs\/[0-9a-f-]{36}$/);
